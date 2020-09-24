@@ -1,0 +1,63 @@
+version: "3"
+services:
+
+  devtools:
+    build: ./devtools
+    volumes:
+      - ../:${DESTINATION_PATH}/
+      - ~/.npm:/var/www/.npm
+      - ~/.composer:/var/www/.composer
+    networks:
+      - default
+      - mysql
+    environment:
+      XDEBUG_CONFIG: "${XDEBUG_CONFIG_DEVTOOLS}"
+      PHP_IDE_CONFIG: "${PHP_IDE_CONFIG}"
+
+  fpm:
+    build: ./fpm
+    volumes:
+      - ../:${DESTINATION_PATH}/
+      - git:${DESTINATION_PATH}/.git
+    networks:
+      - default
+      - mysql
+    environment:
+      XDEBUG_CONFIG: "${XDEBUG_CONFIG_FPM}"
+      PHP_IDE_CONFIG: "${PHP_IDE_CONFIG}"
+
+  apache:
+      image: httpd:2.4
+      depends_on:
+        - fpm
+      ports:
+        - 80:80
+      environment:
+        HOST_DOMAIN: "${HOST_DOMAIN}"
+        HOST_ALIAS: "${HOST_ALIAS}"
+        DESTINATION_PATH: "${DESTINATION_PATH}"
+      volumes:
+        - ../:${DESTINATION_PATH}/
+        - git:${DESTINATION_PATH}/.git
+        - ./httpd/httpd-vhosts.conf:/usr/local/apache2/conf/extra/httpd-vhosts.conf
+        - ./httpd/httpd.conf:/usr/local/apache2/conf/httpd.conf
+      working_dir: ${DESTINATION_PATH}/
+      networks:
+        default:
+      
+  redis:
+    image: redis
+    networks:
+      default:
+        aliases:
+          - redishost
+
+networks:
+  default:
+
+  mysql:
+    external: true
+
+# map .git dir to empty volume in containers that don't need it
+volumes:
+  git:
