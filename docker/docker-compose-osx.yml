@@ -32,10 +32,6 @@ services:
         - fpm
       ports:
         - 80:80
-      environment:
-        HOST_DOMAIN: "${HOST_DOMAIN}"
-        HOST_ALIAS: "${HOST_ALIAS}"
-        DESTINATION_PATH: "${DESTINATION_PATH}"
       volumes:
         - ../:${DESTINATION_PATH}/
         - git:${DESTINATION_PATH}/.git
