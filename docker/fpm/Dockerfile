@@ -12,6 +12,9 @@ RUN usermod -u $UID $UNAME
 # Install Xdebug (but don't enable)
 RUN pecl install -o -f xdebug
 
+# Install pdo_mysql
+RUN docker-php-ext-install pdo_mysql mysqli
+
 # Install netstat for dynamic xdebug remote_host from entrypoint.sh
 RUN apt-get update \
     && apt-get install -y net-tools
