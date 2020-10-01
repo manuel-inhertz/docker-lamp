@@ -41,6 +41,7 @@ services:
       - git:${DESTINATION_PATH}/.git
       - ./httpd/httpd-vhosts.conf:/usr/local/apache2/conf/extra/httpd-vhosts.conf
       - ./httpd/httpd.conf:/usr/local/apache2/conf/httpd.conf
+      - ./httpd/logs/:/var/logs/
     working_dir: ${DESTINATION_PATH}/
     networks:
       devbox:
