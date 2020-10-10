@@ -10,7 +10,7 @@ services:
     networks:
       - default
       - mysql
-      - devbox # don't rely on mysql for xdebug
+      - devbox
     environment:
       XDEBUG_CONFIG: "${XDEBUG_CONFIG_DEVTOOLS}"
       PHP_IDE_CONFIG: "${PHP_IDE_CONFIG}"
@@ -23,7 +23,7 @@ services:
     networks:
       - default
       - mysql
-      - devbox # don't rely on mysql for xdebug
+      - devbox
     environment:
       XDEBUG_CONFIG: "${XDEBUG_CONFIG_FPM}"
       PHP_IDE_CONFIG: "${PHP_IDE_CONFIG}"
@@ -33,19 +33,21 @@ services:
     depends_on:
       - fpm
     environment:
-      HOST_DOMAIN: "${HOST_DOMAIN}"
-      HOST_ALIAS: "${HOST_ALIAS}"
       DESTINATION_PATH: "${DESTINATION_PATH}"
+      VIRTUAL_HOST: "${VIRTUAL_HOST}"
+      LETSENCRYPT_EMAIL: "webmaster@example.com"
+      LETSENCRYPT_HOST: "${VIRTUAL_HOST}"
+
     volumes:
       - ../:${DESTINATION_PATH}/
       - git:${DESTINATION_PATH}/.git
       - ./httpd/httpd-vhosts.conf:/usr/local/apache2/conf/extra/httpd-vhosts.conf
       - ./httpd/httpd.conf:/usr/local/apache2/conf/httpd.conf
-      - ./httpd/logs/:/var/logs/
+      - ./httpd/logs/:/var/log/
     working_dir: ${DESTINATION_PATH}/
     networks:
-      devbox:
       default:
+      devbox:
       
   redis:
     image: redis
@@ -56,10 +58,10 @@ services:
 
 networks:
   default:
-
   devbox:
     external: true
-
+  back:
+    driver: bridge
   mysql:
     external: true
 

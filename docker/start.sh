@@ -1,16 +1,10 @@
 #!/bin/bash
 # Script to start docker containers
 
-if [ "$(uname)" == "Darwin" ]; then
-    # Build compose for Mac OS X platform
-    sudo docker-compose -f ./docker-compose-osx.yml up -d  
-elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
-    # Build compose for GNU/Linux platform
-    sudo docker-compose -f ./docker-compose-linux.yml up -d 
-fi
+sudo docker-compose up -d  
 
-HOST_DOMAIN=$(grep HOST_DOMAIN ./.env)
-HOST_DOMAIN=${HOST_DOMAIN//HOST_DOMAIN=/''}
+HOST_DOMAIN=$(grep VIRTUAL_HOST ./.env)
+HOST_DOMAIN=${VIRTUAL_HOST//VIRTUAL_HOST=/''}
 
-echo "\033[1;33m All done! > you can visit http://$HOST_DOMAIN \033[0m"
+echo "\033[1;33m All done! > you can visit https://$VIRTUAL_HOST \033[0m"
 exit
